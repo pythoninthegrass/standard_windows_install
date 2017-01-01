@@ -1,0 +1,37 @@
+## Boxstarter Automated script
+# Run in Powershell admin prompt:
+# START http://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/pythoninthegrass/windows-development-environment/master/boxstarter
+
+# Configure Windows
+Set-WindowsExplorerOptions -EnableShowFileExtensions -EnableShowFullPathInTitleBar
+Enable-RemoteDesktop
+Disable-UAC
+Update-ExecutionPolicy Unrestricted
+
+# cinst -y Microsoft-Hyper-V-All -source windowsFeatures # Disabled due to conflict with vagrant up
+
+## Basics
+cinst -y vlc
+cinst -y firefox
+cinst -y GoogleChrome
+cinst -y evernote
+cinst -y cmder -pre
+cinst -y spotify
+cinst -y musicbee
+cinst -y steam
+cinst -y discord
+cinst -y skype
+cinst -y dropbox
+cinst -y googledrive
+cinst -y 7zip.install
+cinst -y sysinternals
+cinst -y dotnet4.6
+# cinst -y PowerShell -- not needed on windows 10
+if (Test-PendingReboot) { Invoke-Reboot }
+
+# Pinning Things
+# Install-ChocolateyPinnedTaskBarItem "$env:programfiles\Google\Chrome\Application\chrome.exe"
+
+# Let's get Updates, too
+Enable-MicrosoftUpdate
+Install-WindowsUpdate -acceptEula
