@@ -1,6 +1,6 @@
 ## Boxstarter Automated script
 # Run in Powershell admin prompt:
-# START http://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/pythoninthegrass/windows-development-environment/master/boxstarter
+# START http://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/pythoninthegrass/standard_windows_install/master/boxstarter
 
 # Configure Windows
 Set-WindowsExplorerOptions -EnableShowFileExtensions -EnableShowFullPathInTitleBar
