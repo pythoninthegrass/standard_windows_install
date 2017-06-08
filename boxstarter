@@ -1,37 +1,91 @@
+<#
 ## Boxstarter Automated script
 # Run in Powershell admin prompt:
 # START http://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/pythoninthegrass/standard_windows_install/master/boxstarter
 
-# Configure Windows
-Set-WindowsExplorerOptions -EnableShowFileExtensions -EnableShowFullPathInTitleBar
-Enable-RemoteDesktop
-Disable-UAC
-Update-ExecutionPolicy Unrestricted
+# Sources:
+https://github.com/JonCubed/boxstarter/blob/master/box.ps1
+https://github.com/cdhunt/Boxstarter/blob/master/DevWorkstation.ps1
+#>
 
-# cinst -y Microsoft-Hyper-V-All -source windowsFeatures # Disabled due to conflict with vagrant up
+# ENV Variables
+#$Boxstarter.RebootOk=$true
+#$Boxstarter.NoPassword=$false
+#$Boxstarter.AutoLogin=$true
 
-## Basics
-cinst -y vlc
-cinst -y firefox
-cinst -y GoogleChrome
-cinst -y evernote
-cinst -y cmder -pre
-cinst -y spotify
-cinst -y musicbee
-cinst -y steam
-cinst -y discord
-cinst -y skype
-cinst -y dropbox
-cinst -y googledrive
-cinst -y 7zip.install
-cinst -y sysinternals
-cinst -y dotnet4.6
-# cinst -y PowerShell -- not needed on windows 10
-if (Test-PendingReboot) { Invoke-Reboot }
+# Disable chocolatey default confirmation behaviour (no need for --yes or -y switch)
+choco feature enable --name=allowGlobalConfirmation
 
-# Pinning Things
-# Install-ChocolateyPinnedTaskBarItem "$env:programfiles\Google\Chrome\Application\chrome.exe"
+function ConfigureBaseSettings()
+{
+    "Configuring base settings"
+    Update-ExecutionPolicy -Policy Unrestricted
+    Set-CornerNavigationOptions -EnableUsePowerShellOnWinX
+    Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -DisableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar
+    Enable-RemoteDesktop
+    Start-Process 'powercfg.exe' -Verb runAs -ArgumentList '/h off'     # Disable hibernate
+    Disable-UAC
+}
 
-# Let's get Updates, too
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
+function InstallChocolatey()
+{
+    "Installing Chocolatey"
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+}
+
+function InstallChocoCoreApps()
+{
+    "Installing core apps"
+    cinst 7zip                   --limitoutput
+    cinst ccleaner               --limitoutput
+    cinst dropbox                --limitoutput
+    cinst Firefox                --limitoutput
+    cinst flashplayerplugin      --limitoutput
+    cinst GoogleChrome           --limitoutput
+    cinst googledrive            --limitoutput
+}
+
+function InstallChocoDevApps
+{
+    "Installing dev apps"
+    cinst atom                   --limitoutput
+    cinst autohotkey.install     --limitoutput
+    cinst bulkrenameutility      --limitoutput
+    cinst commandwindowhere      --limitoutput
+    cinst checksum               --limitoutput
+    cinst cmder -pre             --limitoutput
+    cinst Cygwin                 --limitoutput
+    cinst dotnet4.7              --limitoutput
+    cinst diffmerge              --limitoutput
+    cinst git.install -params '"/GitAndUnixToolsOnPath"' --limitoutput
+    cinst github                 --limitoutput
+    cinst gitextensions          --limitoutput
+    cinst markdownpad2           --limitoutput
+    cinst nmap                   --limitoutput
+    cinst notepadplusplus        --limitoutput
+    cinst nsis.install           --limitoutput
+    cinst putty                  --limitoutput
+    cinst sysinternals           --limitoutput
+    cinst virtualbox             --limitoutput
+    cinst winscp                 --limitoutput
+    cinst wintail                --limitoutput
+    cinst wireshark              --limitoutput
+}
+
+function InstallWindowsUpdate()
+{
+    "Installing Windows Updates"
+    Enable-MicrosoftUpdate
+    Install-WindowsUpdate -AcceptEula
+    if (Test-PendingReboot) { Invoke-Reboot }
+}
+
+# Run ALL THE THINGS
+ConfigureBaseSettings
+InstallChocolatey
+#InstallChocoCoreApps
+#InstallChocoDevApps
+#InstallWindowsUpdate
+
+# Re-enable chocolatey default confirmation behaviour
+choco feature disable --name=allowGlobalConfirmation
