@@ -1,8 +1,4 @@
 <#
-## Boxstarter Automated script
-# Run in Powershell admin prompt:
-# START http://boxstarter.org/package/nr/url?https://raw.githubusercontent.com/pythoninthegrass/standard_windows_install/master/boxstarter
-
 # Sources:
 https://github.com/JonCubed/boxstarter/blob/master/box.ps1
 https://github.com/cdhunt/Boxstarter/blob/master/DevWorkstation.ps1
@@ -83,9 +79,9 @@ function InstallWindowsUpdate()
 # Run ALL THE THINGS
 ConfigureBaseSettings
 InstallChocolatey
-#InstallChocoCoreApps
-#InstallChocoDevApps
-#InstallWindowsUpdate
+InstallChocoCoreApps
+InstallChocoDevApps
+InstallWindowsUpdate
 
 # Re-enable chocolatey default confirmation behaviour
 choco feature disable --name=allowGlobalConfirmation
